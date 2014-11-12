@@ -1,25 +1,45 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"syscall"
 )
 
-func main() {
-	path := os.Args
-	if len(path) < 3 {
-		fmt.Printf("Usage: %s <Path> <Section>", path[0])
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
-	fileInfo, err := ioutil.ReadDir(path[1])
-	if err != nil {
-		panic(err)
+}
+
+func main() {
+	if len(os.Args) < 3 {
+		fmt.Printf("Usage: %s <Path> <Section>\n", os.Args[0])
+		syscall.Exit(1)
 	}
 
-    contentPath := "content/" + path[2]
-    os.Create(contentPath)
+	contentPath := "content/" + os.Args[2] + "/"
+	src, err := os.Stat(contentPath)
+	if err != nil || !src.IsDir() {
+		err = os.Mkdir(contentPath, 0755)
+		check(err)
+	}
+
+	fileInfo, err := ioutil.ReadDir(os.Args[1])
+	check(err)
+
 	for index, file := range fileInfo {
 		fmt.Printf("%d %s\n", index, file.Name())
-        ioutil.WriteFile(contentPath + "/" + file.Name(), []byte("test"), 0644)
+		filePath := contentPath + file.Name() + ".md"
+		fmt.Println(filePath)
+		f, err := os.Create(filePath)
+		check(err)
+		defer f.Close()
+		f.Sync()
+		w := bufio.NewWriter(f)
+		w.WriteString(file.Name())
+		w.Flush()
 	}
 }
