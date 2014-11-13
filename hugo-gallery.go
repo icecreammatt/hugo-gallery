@@ -15,14 +15,14 @@ import (
 var postTemplate string = `---
 title: {{.Title}}
 date: {{.Date}}
-imageName: {{.ImageName}}
+image_name: {{.ImagePath}}
 ---
 `
 
 type GalleryItem struct {
 	Title     string
 	Date      string
-	ImageName string
+	ImagePath string
 }
 
 func check(e error) {
@@ -38,6 +38,7 @@ func main() {
 	}
 
 	sourcePath := os.Args[1]
+	staticRoot := strings.Replace(os.Args[1], "static/", "", 1) + "/"
 	section := os.Args[2]
 	title := os.Args[3]
 	contentPath := "content/" + section + "/"
@@ -52,14 +53,14 @@ func main() {
 	check(err)
 
 	for _, file := range fileInfo {
-		generatePost(file, contentPath, title)
+		generatePost(file, staticRoot, contentPath, title)
 	}
 }
 
-func generatePost(file os.FileInfo, contentPath string, title string) {
+func generatePost(file os.FileInfo, sourcePath string, contentPath string, title string) {
 	galleryItem := GalleryItem{
 		Title:     title,
-		ImageName: file.Name(),
+		ImagePath: sourcePath + file.Name(),
 		Date:      time.Now().String(),
 	}
 
