@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -14,7 +15,8 @@ import (
 
 var postTemplate string = `---
 title: {{.Title}}
-date: {{.Date}}
+date: "{{.Date}}"
+weight: {{.Weight}}
 image_name: {{.ImagePath}}
 ---
 `
@@ -23,6 +25,7 @@ type GalleryItem struct {
 	Title     string
 	Date      string
 	ImagePath string
+	Weight    string
 }
 
 func check(e error) {
@@ -52,16 +55,17 @@ func main() {
 	fileInfo, err := ioutil.ReadDir(sourcePath)
 	check(err)
 
-	for _, file := range fileInfo {
-		generatePost(file, staticRoot, contentPath, title)
+	for index, file := range fileInfo {
+		generatePost(index, file, staticRoot, contentPath, title)
 	}
 }
 
-func generatePost(file os.FileInfo, sourcePath string, contentPath string, title string) {
+func generatePost(index int, file os.FileInfo, sourcePath string, contentPath string, title string) {
 	galleryItem := GalleryItem{
 		Title:     title,
 		ImagePath: sourcePath + file.Name(),
-		Date:      time.Now().String(),
+		Date:      time.Now().Format("2006-01-02"),
+		Weight:    strconv.Itoa(index),
 	}
 
 	var buffer bytes.Buffer
@@ -83,5 +87,6 @@ func generateTemplate(galleryItem GalleryItem, buffer *bytes.Buffer) {
 
 	t := template.New("post template")
 	t, _ = t.Parse(postTemplate)
-	t.Execute(buffer, galleryItem)
+	err := t.Execute(buffer, galleryItem)
+	check(err)
 }
