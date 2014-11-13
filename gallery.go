@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"syscall"
 	"text/template"
 	"time"
@@ -65,7 +66,9 @@ func generatePost(file os.FileInfo, contentPath string, title string) {
 	var buffer bytes.Buffer
 	generateTemplate(galleryItem, &buffer)
 
-	filePath := contentPath + file.Name() + ".md"
+	extensionIndex := strings.Index(file.Name(), ".")
+	fileName := file.Name()[:extensionIndex]
+	filePath := contentPath + fileName + ".md"
 	f, err := os.Create(filePath)
 	check(err)
 	defer f.Close()
