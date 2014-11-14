@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -16,7 +15,6 @@ import (
 var postTemplate string = `---
 title: {{.Title}}
 date: "{{.Date}}"
-weight: {{.Weight}}
 image_name: {{.ImagePath}}
 previous_image: {{.PreviousImage}}
 next_image: {{.NextImage}}
@@ -29,7 +27,6 @@ type GalleryItem struct {
 	Title            string
 	Date             string
 	ImagePath        string
-	Weight           string
 	NextImage        string
 	PreviousImage    string
 	NextPostPath     string
@@ -106,7 +103,6 @@ func generatePost(index int, file os.FileInfo, sourcePath string, contentPath st
 		Title:            title,
 		ImagePath:        sourcePath + file.Name(),
 		Date:             time.Now().Format("2006-01-02"),
-		Weight:           strconv.Itoa(index),
 		NextImage:        nextImagePath,
 		PreviousImage:    previousImagePath,
 		NextPostPath:     nextPostPath,
