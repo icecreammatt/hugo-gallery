@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 	"syscall"
 	"text/template"
@@ -33,10 +34,15 @@ type GalleryItem struct {
 	PreviousPostPath string
 }
 
-func check(e error) {
+func check(e error) int {
+	result := 0
 	if e != nil {
-		panic(e)
+		result = 1
+		defer func() {
+			panic(e)
+		}()
 	}
+	return result
 }
 
 func main() {
@@ -49,6 +55,7 @@ func main() {
 	staticRoot := strings.Replace(os.Args[1], "static/", "", 1) + "/"
 	section := os.Args[2] + "/"
 	title := os.Args[3]
+	baseUrl := os.Args[4]
 	contentPath := "content/" + section
 
 	src, err := os.Stat(contentPath)
@@ -62,7 +69,7 @@ func main() {
 
 	for index, file := range postList {
 		previousImage, nextImage := getPreviousAndNextPost(index, postList)
-		generatePost(index, file, staticRoot, contentPath, title, previousImage, nextImage, section)
+		generatePost(index, file, staticRoot, contentPath, title, previousImage, nextImage, section, baseUrl)
 	}
 }
 
@@ -77,31 +84,41 @@ func getPreviousAndNextPost(index int, postList []os.FileInfo) (previous os.File
 }
 
 func stripExtension(baseUri string) (fileName string) {
-	extensionIndex := strings.Index(baseUri, ".")
-	fileName = baseUri[:extensionIndex]
+	extension := path.Ext(baseUri)
+	fileName = baseUri[0 : len(baseUri)-len(extension)]
 	return
 }
 
-func buildPathFromFileInfo(imageFile os.FileInfo, sourcePath string, excludeExtension bool) (imagePath string) {
+func buildPathFromFileInfo(imageFile os.FileInfo, sourcePath string, excludeExtension bool, baseUrl string) (imagePath string) {
 	if imageFile != nil {
 		fileName := imageFile.Name()
 		if excludeExtension {
 			fileName = stripExtension(imageFile.Name())
 		}
-		imagePath = sourcePath + fileName
+		if baseUrl != "" && !excludeExtension {
+			imagePath = baseUrl + "/" + sourcePath + fileName
+		} else {
+			imagePath = sourcePath + fileName
+		}
 	}
 	return
 }
 
-func generatePost(index int, file os.FileInfo, sourcePath string, contentPath string, title string, previousImage os.FileInfo, nextImage os.FileInfo, section string) {
-	nextImagePath := buildPathFromFileInfo(nextImage, sourcePath, false)
-	previousImagePath := buildPathFromFileInfo(previousImage, sourcePath, false)
-	nextPostPath := buildPathFromFileInfo(nextImage, section, true)
-	previousPostPath := buildPathFromFileInfo(previousImage, section, true)
+func generatePost(index int, file os.FileInfo, sourcePath string, contentPath string, title string, previousImage os.FileInfo, nextImage os.FileInfo, section string, baseUrl string) {
+	nextImagePath := buildPathFromFileInfo(nextImage, sourcePath, false, baseUrl)
+	previousImagePath := buildPathFromFileInfo(previousImage, sourcePath, false, baseUrl)
+	nextPostPath := buildPathFromFileInfo(nextImage, section, true, baseUrl)
+	previousPostPath := buildPathFromFileInfo(previousImage, section, true, baseUrl)
+	currentImagePath := ""
+	if baseUrl != "" {
+		currentImagePath = baseUrl + "/" + sourcePath + file.Name()
+	} else {
+		currentImagePath = sourcePath + file.Name()
+	}
 
 	galleryItem := GalleryItem{
 		Title:            title,
-		ImagePath:        sourcePath + file.Name(),
+		ImagePath:        currentImagePath,
 		Date:             time.Now().Format("2006-01-02"),
 		NextImage:        nextImagePath,
 		PreviousImage:    previousImagePath,
