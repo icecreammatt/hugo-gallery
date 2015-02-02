@@ -47,7 +47,7 @@ func check(e error) int {
 
 func main() {
 	if len(os.Args) < 4 {
-		fmt.Printf("Usage: %s <Source Path> <Destination Section> <Title>\n", os.Args[0])
+		fmt.Printf("Usage: %s <Source Path> <Destination Section> <Title> [BaseUrl]\n", os.Args[0])
 		syscall.Exit(1)
 	}
 
