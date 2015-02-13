@@ -61,11 +61,17 @@ func main() {
 	src, err := os.Stat(contentPath)
 	if err != nil || !src.IsDir() {
 		err = os.Mkdir(contentPath, 0755)
-		check(err)
+		if err != nil {
+			fmt.Printf("content directory not found! Are you in a hugo directory?\n")
+			os.Exit(1)
+		}
 	}
 
 	postList, err := ioutil.ReadDir(sourcePath)
-	check(err)
+	if err != nil {
+		fmt.Printf("Source path <%s> not found!\n", sourcePath)
+		os.Exit(1)
+	}
 
 	for index, file := range postList {
 		previousImage, nextImage := getPreviousAndNextPost(index, postList)
