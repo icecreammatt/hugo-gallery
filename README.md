@@ -3,7 +3,7 @@
 This tool will create a new posts directory containing a markdown file for each image in source directory allowing for an ordered slide show.
 
 ## Usage
-`hugo-gallery <Source Path> <Destination Section> <Title>`
+`hugo-gallery <Source Path> <Destination Section> <Title> [BaseUrl]`
 
 ## Example
 
