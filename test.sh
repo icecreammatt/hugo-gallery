@@ -4,6 +4,7 @@ go build
 
 cwd=$(pwd)
 
+# Setup Sample Directory
 rm -rf sample-site 2> /dev/null
 mkdir -p sample-site/static/images
 mkdir -p sample-site/content
@@ -15,11 +16,8 @@ for image in ${testImages[@]}; do
     touch sample-site/static/images/$image
 done
 
+# Run hugo-gallery on sample directory
 cd sample-site
-pwd
-ls ../
-
 ../hugo-gallery static/images test_gallery "Test Gallery" domain.com
 ../hugo-gallery static/images test_gallery2 "Test Gallery 2"
-
 cd $cwd
