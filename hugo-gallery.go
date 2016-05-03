@@ -55,7 +55,10 @@ func main() {
 	staticRoot := strings.Replace(os.Args[1], "static/", "", 1) + "/"
 	section := os.Args[2] + "/"
 	title := os.Args[3]
-	baseUrl := os.Args[4]
+	var baseUrl = ""
+	if len(os.Args) > 4 {
+		baseUrl = os.Args[4]
+	}
 	contentPath := "content/" + section
 
 	src, err := os.Stat(contentPath)
