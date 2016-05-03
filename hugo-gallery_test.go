@@ -13,11 +13,11 @@ func TestGeneratePost(t *testing.T) {
 func TestGenerateTemplate(t *testing.T) {
 	testItem := GalleryItem{
 		Title:            "test_title",
-		ImagePath:        "test_path/test_file0.jpg",
+		ImagePath:        "sample-site/static/images/image1.jpg",
 		Date:             "2006-01-02",
-		NextImage:        "test_path/test_file1.jpg",
+		NextImage:        "sample-site/static/images/image2.jpg",
 		PreviousImage:    "",
-		NextPostPath:     "test/test_file1",
+		NextPostPath:     "test/image1",
 		PreviousPostPath: "",
 	}
 	var buffer bytes.Buffer
@@ -40,32 +40,32 @@ func TestStripExtension(t *testing.T) {
 }
 
 func TestBuildPathFromFileInfo(t *testing.T) {
-	postList, err := ioutil.ReadDir("test_data/file_list")
+	postList, err := ioutil.ReadDir("sample-site/static/images")
 	if err != nil {
-		t.Error("Expected files in test_data/file_list", err)
+		t.Error("Expected files in sample-site/static/images", err)
 	}
 
-	firstPath := buildPathFromFileInfo(postList[0], "test_data/file_list/", true, "")
-	if firstPath != "test_data/file_list/image1" {
-		t.Error("Expected", "test_data/file_list/image1", "got", firstPath)
+	firstPath := buildPathFromFileInfo(postList[0], "sample-site/static/images/", true, "")
+	if firstPath != "sample-site/static/images/image1" {
+		t.Error("Expected", "sample-site/static/images/image1", "got", firstPath)
 	}
 
-	firstPath = buildPathFromFileInfo(postList[0], "test_data/file_list/", false, "")
-	if firstPath != "test_data/file_list/image1.jpg" {
-		t.Error("Expected", "test_data/file_list/image1.jpg", "got", firstPath)
+	firstPath = buildPathFromFileInfo(postList[0], "sample-site/static/images/", false, "")
+	if firstPath != "sample-site/static/images/image1.jpg" {
+		t.Error("Expected", "sample-site/static/images/image1.jpg", "got", firstPath)
 	}
 
-	firstPath = buildPathFromFileInfo(postList[0], "test_data/file_list/", false, "s3.amazon.com")
-	if firstPath != "s3.amazon.com/test_data/file_list/image1.jpg" {
-		t.Error("Expected", "s3.amazon.com/test_data/file_list/image1.jpg", "got", firstPath)
+	firstPath = buildPathFromFileInfo(postList[0], "sample-site/static/images/", false, "s3.amazon.com")
+	if firstPath != "s3.amazon.com/sample-site/static/images/image1.jpg" {
+		t.Error("Expected", "s3.amazon.com/sample-site/static/images/image1.jpg", "got", firstPath)
 	}
 
 }
 
 func TestGetPreviousAndNextPost(t *testing.T) {
-	postList, err := ioutil.ReadDir("test_data/file_list")
+	postList, err := ioutil.ReadDir("sample-site/static/images")
 	if err != nil {
-		t.Error("Expected files in test_data/file_list", err)
+		t.Error("Expected files in sample-site/static/images", err)
 	}
 
 	// Test for start of list
