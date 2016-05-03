@@ -3,8 +3,13 @@ package main
 import (
 	"bytes"
 	"io/ioutil"
+	"os/exec"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	exec.Command("test.sh")
+}
 
 func TestGeneratePost(t *testing.T) {
 

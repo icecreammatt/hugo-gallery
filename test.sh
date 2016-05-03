@@ -22,4 +22,3 @@ ls ../
 ../hugo-gallery static/images test_gallery "Test Gallery" domain.com
 
 cd $cwd
-go test
