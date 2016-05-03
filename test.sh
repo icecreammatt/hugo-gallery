@@ -20,5 +20,6 @@ pwd
 ls ../
 
 ../hugo-gallery static/images test_gallery "Test Gallery" domain.com
+../hugo-gallery static/images test_gallery2 "Test Gallery 2"
 
 cd $cwd
